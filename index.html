@@ -3,161 +3,389 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DOtBan - Official Page</title>
+    <title>DOtBan - Ultra Cyberpunk Platform</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        html {
+            scroll-behavior: smooth;
         }
         body {
-            background-color: #0b0b0f;
+            background-color: #030305;
             color: #ffffff;
             overflow-x: hidden;
+            cursor: default;
         }
+
+        /* Canvas Layers for Ultra Graphics */
+        #bgCanvas, #modelCanvas, #trailCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        #bgCanvas { z-index: -3; }
+        #modelCanvas { z-index: -2; }
+        #trailCanvas { z-index: 9999; }
+
+        /* Ultra Background Glow Overlay */
+        .ultra-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 20%, rgba(255, 0, 51, 0.12) 0%, rgba(5, 5, 10, 0.8) 70%, #030305 100%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Header Navigation */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 20px 50px;
-            border-bottom: 1px solid #222;
-            background: rgba(11, 11, 15, 0.9);
+            border-bottom: 1px solid rgba(255, 0, 51, 0.3);
+            background: rgba(3, 3, 5, 0.8);
+            backdrop-filter: blur(16px);
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
         .logo {
-            font-size: 24px;
-            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 26px;
+            font-weight: 800;
             color: #ff0033;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px rgba(255, 0, 51, 0.8);
+        }
+        .logo svg {
+            width: 30px;
+            height: 30px;
+            fill: #ff0033;
+            filter: drop-shadow(0 0 10px #ff0033);
+        }
+        nav {
+            display: flex;
+            gap: 30px;
         }
         nav a {
             color: #aaa;
             text-decoration: none;
-            margin-left: 30px;
-            transition: 0.3s;
+            font-size: 14px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            position: relative;
+            letter-spacing: 1px;
         }
         nav a:hover {
             color: #ff0033;
+            text-shadow: 0 0 10px #ff0033;
         }
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: #ff0033;
+            box-shadow: 0 0 8px #ff0033;
+            transition: width 0.3s ease;
+        }
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
         .hero {
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 0 20px;
-            background: radial-gradient(circle at center, #1a0f1a 0%, #0b0b0f 70%);
+            padding: 140px 20px 60px 20px;
+            position: relative;
         }
         .hero h1 {
-            font-size: 48px;
+            font-size: 60px;
             margin-bottom: 20px;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 5px;
+            line-height: 1.1;
+            text-shadow: 0 0 30px rgba(255, 0, 51, 0.4);
         }
         .hero h1 span {
             color: #ff0033;
+            text-shadow: 0 0 30px rgba(255, 0, 51, 0.9);
         }
         .hero p {
             font-size: 18px;
-            color: #888;
-            max-width: 600px;
-            margin-bottom: 40px;
+            color: #999;
+            max-width: 700px;
+            margin-bottom: 35px;
+            line-height: 1.6;
         }
+
+        /* Badges */
+        .badge-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 0, 51, 0.08);
+            border: 1px solid rgba(255, 0, 51, 0.5);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #ff0033;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px rgba(255, 0, 51, 0.25);
+            text-transform: uppercase;
+            backdrop-filter: blur(5px);
+        }
+        .badge svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+        .badge-update {
+            background: rgba(0, 255, 102, 0.08);
+            border: 1px solid rgba(0, 255, 102, 0.5);
+            color: #00ff66;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.25);
+        }
+
+        /* Buttons */
         .btn {
-            background-color: #ff0033;
+            background: linear-gradient(135deg, #ff0033, #8f001c);
             color: #fff;
-            padding: 15px 40px;
+            padding: 18px 50px;
             font-size: 18px;
-            font-weight: bold;
+            font-weight: 800;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             text-decoration: none;
-            box-shadow: 0 0 20px rgba(255, 0, 51, 0.4);
+            box-shadow: 0 0 35px rgba(255, 0, 51, 0.5);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #fff;
         }
         .btn:hover {
-            background-color: #e6002e;
-            box-shadow: 0 0 30px rgba(255, 0, 51, 0.8);
-            transform: scale(1.05);
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 0 50px rgba(255, 0, 51, 0.9);
         }
+        .btn.downloading {
+            background: #11111a;
+            color: #ff0033;
+            border: 1px solid #ff0033;
+            pointer-events: none;
+            animation: pulseBtn 0.8s infinite alternate;
+        }
+        .btn.downloading svg {
+            fill: #ff0033;
+        }
+
+        .ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: rippleEffect 0.6s linear;
+            pointer-events: none;
+        }
+
+        /* Features */
         .features {
-            padding: 100px 50px;
-            background: #0d0d12;
+            padding: 130px 50px;
+            background: rgba(10, 10, 15, 0.75);
+            backdrop-filter: blur(12px);
             text-align: center;
+            border-top: 1px solid rgba(255, 0, 51, 0.2);
+            border-bottom: 1px solid rgba(255, 0, 51, 0.2);
         }
         .features h2 {
-            font-size: 36px;
-            margin-bottom: 50px;
-            color: #fff;
+            font-size: 42px;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(255, 0, 51, 0.3);
+        }
+        .section-desc {
+            color: #888;
+            font-size: 16px;
+            max-width: 700px;
+            margin: 0 auto 60px auto;
+            line-height: 1.6;
         }
         .feature-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 30px;
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         .feature-card {
-            background: #14141c;
-            padding: 30px;
-            border-radius: 8px;
-            border: 1px solid #222;
-            transition: 0.3s;
+            background: rgba(18, 18, 26, 0.85);
+            padding: 40px 35px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: left;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
         .feature-card:hover {
             border-color: #ff0033;
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(255, 0, 51, 0.3);
+        }
+        .card-icon {
+            width: 52px;
+            height: 52px;
+            background: rgba(255, 0, 51, 0.12);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 0, 51, 0.4);
+            box-shadow: 0 0 15px rgba(255, 0, 51, 0.2);
+        }
+        .card-icon svg {
+            width: 26px;
+            height: 26px;
+            fill: #ff0033;
         }
         .feature-card h3 {
-            margin-bottom: 15px;
-            color: #ff0033;
+            margin-bottom: 12px;
+            color: #fff;
+            font-size: 22px;
+            letter-spacing: 1px;
         }
         .feature-card p {
-            color: #888;
-            font-size: 14px;
+            color: #999;
+            font-size: 15px;
+            line-height: 1.6;
         }
+
+        /* Roadmap */
+        .roadmap {
+            padding: 120px 50px;
+            text-align: center;
+            background: radial-gradient(circle at center, #1a0812 0%, #030305 80%);
+        }
+        .roadmap h2 {
+            font-size: 40px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .roadmap-box {
+            max-width: 850px;
+            margin: 0 auto;
+            background: rgba(18, 18, 26, 0.9);
+            border: 1px dashed rgba(255, 0, 51, 0.6);
+            padding: 45px;
+            border-radius: 16px;
+            text-align: left;
+            box-shadow: 0 0 35px rgba(255, 0, 51, 0.2);
+        }
+        .roadmap-box h3 {
+            color: #ff0033;
+            margin-bottom: 15px;
+            font-size: 24px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .roadmap-box h3 svg {
+            width: 26px;
+            height: 26px;
+            fill: #ff0033;
+        }
+        .roadmap-box p {
+            color: #bbb;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+
+        /* Gallery */
         .screenshots {
-            padding: 80px 50px;
-            background: #0b0b0f;
+            padding: 130px 50px;
             text-align: center;
         }
         .screenshots h2 {
-            font-size: 36px;
-            margin-bottom: 40px;
-            color: #fff;
+            font-size: 42px;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
         .screenshot-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            max-width: 1100px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         .screenshot-card {
             background: #14141c;
-            border: 1px solid #222;
-            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
             overflow: hidden;
-            transition: 0.3s;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
         .screenshot-card:hover {
             border-color: #ff0033;
-            transform: scale(1.02);
+            transform: scale(1.03);
+            box-shadow: 0 0 35px rgba(255, 0, 51, 0.4);
         }
         .screenshot-card img {
             width: 100%;
-            height: 200px;
+            height: 230px;
             object-fit: cover;
             display: block;
+            transition: transform 0.4s ease;
         }
-        
+        .screenshot-card:hover img {
+            transform: scale(1.06);
+        }
+
+        /* Lightbox */
         .lightbox {
             display: none;
             position: fixed;
@@ -166,66 +394,138 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(3, 3, 5, 0.96);
             justify-content: center;
             align-items: center;
             cursor: pointer;
+            backdrop-filter: blur(14px);
         }
         .lightbox img {
             max-width: 90%;
             max-height: 90%;
             border: 2px solid #ff0033;
-            border-radius: 8px;
-            box-shadow: 0 0 30px rgba(255, 0, 51, 0.5);
+            border-radius: 14px;
+            box-shadow: 0 0 60px rgba(255, 0, 51, 0.8);
+            animation: zoomIn 0.3s ease;
         }
 
         footer {
             text-align: center;
-            padding: 30px;
-            border-top: 1px solid #222;
-            color: #555;
+            padding: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: #666;
             font-size: 14px;
+            background: #010103;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes rippleEffect {
+            to { transform: scale(4); opacity: 0; }
+        }
+        @keyframes pulseBtn {
+            from { transform: scale(1); }
+            to { transform: scale(1.03); }
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 25px; }
+            nav { display: none; }
+            .hero h1 { font-size: 38px; }
+            .hero p { font-size: 15px; }
+            .features, .screenshots, .roadmap { padding: 80px 20px; }
+            .btn { width: 100%; padding: 16px 20px; }
         }
     </style>
 </head>
 <body>
 
+    <div class="ultra-glow"></div>
+    <canvas id="bgCanvas"></canvas>
+    <canvas id="modelCanvas"></canvas>
+    <canvas id="trailCanvas"></canvas>
+
     <header>
-        <div class="logo">DOtBan</div>
+        <div class="logo">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            DOtBan
+        </div>
         <nav>
-            <a href="#hero">Home</a>
-            <a href="#features">Features</a>
-            <a href="#screenshots">Gallery</a>
-            <a href="#download">Download</a>
+            <a href="#hero">HOME</a>
+            <a href="#features">FEATURES</a>
+            <a href="#roadmap">ROADMAP</a>
+            <a href="#screenshots">GALLERY</a>
+            <a href="#download">DOWNLOAD</a>
         </nav>
     </header>
 
     <section class="hero" id="hero">
-        <h1>Advanced <span>DOtBan</span> Loader</h1>
-        <p>The ultimate external helper tool designed for maximum performance, stability, and undetected gameplay experience.</p>
-        <a href="https://github.com/grek120814-cmyk/DOtBAN/releases/download/DOtBAN/db.exe" class="btn">DOWNLOAD LOADER</a>
+        <h1>ADVANCED <span>DOtBAN LOADER</span></h1>
+        <div class="badge-container">
+            <div class="badge">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                SOFTWARE RELEASE: TODAY
+            </div>
+            <div class="badge badge-update">
+                <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4h7.6l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4-6.2-4.5h7.6z"/></svg>
+                VERSION: v2.4.1 STABLE
+            </div>
+        </div>
+        <p>DOtBan is a next-generation external utility engineered with real-time memory hooks, high-speed execution routines, and undetected system integrity.</p>
+        <a href="https://github.com/grek120814-cmyk/DOtBAN/releases/download/DOtBAN/db.exe" class="btn download-trigger" id="downloadBtn">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            DOWNLOAD LOADER (.EXE)
+        </a>
     </section>
 
     <section class="features" id="features">
-        <h2>CORE FEATURES</h2>
+        <h2>SOFTWARE SPECIFICATIONS</h2>
+        <p class="section-desc">Explore the primary technical modules that power DOtBan and deliver top-tier gameplay advantages.</p>
+        
         <div class="feature-grid">
             <div class="feature-card">
-                <h3>Aimbot & RCS</h3>
-                <p>Configurable FOV, smoothing options, and recoil compensation system for precise tracking.</p>
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                </div>
+                <h3>Precision Aimbot & RCS</h3>
+                <p>Configurable Field of View (FOV), smooth tracking algorithms, and a dedicated Recoil Control System for optimal target tracking.</p>
             </div>
             <div class="feature-card">
-                <h3>Visuals (ESP)</h3>
-                <p>Advanced glowing boxes, player distance indicators, and health bar overlays.</p>
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                </div>
+                <h3>Advanced Visuals (ESP)</h3>
+                <p>High-contrast bounding boxes, distance overlays, and real-time health metrics operating with zero frame latency.</p>
             </div>
             <div class="feature-card">
-                <h3>Skinchanger</h3>
-                <p>Unlock custom knives, gloves, and weapon finishes directly inside your matches.</p>
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2l-5.5 9h11zM12 22l5.5-9h-11z"/></svg>
+                </div>
+                <h3>Integrated Skinchanger</h3>
+                <p>Unlock custom knives, gloves, and rare weapon finishes instantly within active matches without modifying local game files.</p>
             </div>
         </div>
     </section>
 
+    <section class="roadmap" id="roadmap">
+        <h2>DEVELOPMENT ROADMAP</h2>
+        <p class="section-desc">Continuous enhancement drives our platform forward with planned feature releases.</p>
+        
+        <div class="roadmap-box">
+            <h3>
+                <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                Planned Upgrade in 1 Month
+            </h3>
+            <p>Our upcoming major version update scheduled for next month will introduce a redesigned graphical interface, enhanced anti-cheat bypass algorithms, and cloud-synced user configurations.</p>
+            <p>Stay tuned to our official GitHub release channel for real-time update notifications.</p>
+        </div>
+    </section>
+
     <section class="screenshots" id="screenshots">
-        <h2>PREVIEW SCREENSHOTS</h2>
+        <h2>PREVIEW GALLERY</h2>
+        <p class="section-desc">Inspect the loader UI before installation. Click any thumbnail for full-resolution view.</p>
         <div class="screenshot-grid">
             <div class="screenshot-card" onclick="openLightbox('image1.png')">
                 <img src="image1.png" alt="Loader Interface">
@@ -239,10 +539,13 @@
         </div>
     </section>
 
-    <section class="hero" id="download" style="height: 60vh; background: #0b0b0f;">
-        <h2>Ready to get started?</h2>
-        <p>Download the latest stable release (v2.4.1) and inject safely.</p>
-        <a href="https://github.com/grek120814-cmyk/DOtBAN/releases/download/DOtBAN/db.exe" class="btn">DOWNLOAD v2.4.1 (.EXE)</a>
+    <section class="hero" id="download" style="min-height: 50vh; background: transparent;">
+        <h2>READY TO BEGIN?</h2>
+        <p>Get the official v2.4.1 release build directly from our secure storage repository.</p>
+        <a href="https://github.com/grek120814-cmyk/DOtBAN/releases/download/DOtBAN/db.exe" class="btn download-trigger" id="downloadBtnBottom">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            DOWNLOAD v2.4.1 (.EXE)
+        </a>
     </section>
 
     <footer>
@@ -254,7 +557,271 @@
     </div>
 
     <script>
+        // Web Audio API Sound System
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(freq, type, duration) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        document.querySelectorAll('.btn, nav a, .screenshot-card, .feature-card').forEach(el => {
+            el.addEventListener('mouseenter', () => playSound(600, 'sine', 0.05));
+        });
+
+        // Download Trigger
+        document.querySelectorAll('.download-trigger').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                playSound(1200, 'triangle', 0.25);
+
+                const originalHTML = this.innerHTML;
+                this.classList.add('downloading');
+                this.innerHTML = "DOWNLOADING...";
+
+                const rect = this.getBoundingClientRect();
+                const circle = document.createElement('span');
+                const diameter = Math.max(rect.width, rect.height);
+                const radius = diameter / 2;
+
+                circle.style.width = circle.style.height = `${diameter}px`;
+                circle.style.left = `${e.clientX - rect.left - radius}px`;
+                circle.style.top = `${e.clientY - rect.top - radius}px`;
+                circle.classList.add('ripple');
+
+                const oldRipple = this.getElementsByClassName('ripple')[0];
+                if (oldRipple) oldRipple.remove();
+                this.appendChild(circle);
+
+                const targetUrl = this.getAttribute('href');
+
+                setTimeout(() => {
+                    this.classList.remove('downloading');
+                    this.innerHTML = originalHTML;
+                    window.location.href = targetUrl;
+                }, 1200);
+            });
+        });
+
+        // Ultra Cyberpunk Background (Grid Lines + Particles + Glowing Beams)
+        const bgCanvas = document.getElementById('bgCanvas');
+        const bgCtx = bgCanvas.getContext('2d');
+
+        function resizeBg() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeBg);
+        resizeBg();
+
+        const particles = [];
+        for (let i = 0; i < 60; i++) {
+            particles.push({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                size: Math.random() * 2.5 + 0.8,
+                speedX: (Math.random() - 0.5) * 0.6,
+                speedY: (Math.random() - 0.5) * 0.6
+            });
+        }
+
+        let gridOffset = 0;
+
+        function animateBg() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+            // Ultra Perspective Grid Effect
+            bgCtx.strokeStyle = 'rgba(255, 0, 51, 0.04)';
+            bgCtx.lineWidth = 1;
+            const gridSize = 60;
+            gridOffset = (gridOffset + 0.5) % gridSize;
+
+            for (let x = 0; x < bgCanvas.width; x += gridSize) {
+                bgCtx.beginPath();
+                bgCtx.moveTo(x, 0);
+                bgCtx.lineTo(x, bgCanvas.height);
+                bgCtx.stroke();
+            }
+            for (let y = gridOffset; y < bgCanvas.height; y += gridSize) {
+                bgCtx.beginPath();
+                bgCtx.moveTo(0, y);
+                bgCtx.lineTo(bgCanvas.width, y);
+                bgCtx.stroke();
+            }
+
+            // Particles and connections
+            bgCtx.fillStyle = 'rgba(255, 0, 51, 0.6)';
+            bgCtx.strokeStyle = 'rgba(255, 0, 51, 0.08)';
+
+            particles.forEach((p, index) => {
+                p.x += p.speedX;
+                p.y += p.speedY;
+
+                if (p.x < 0) p.x = bgCanvas.width;
+                if (p.x > bgCanvas.width) p.x = 0;
+                if (p.y < 0) p.y = bgCanvas.height;
+                if (p.y > bgCanvas.height) p.y = 0;
+
+                bgCtx.beginPath();
+                bgCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                bgCtx.fill();
+
+                for (let j = index + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if (dist < 140) {
+                        bgCtx.beginPath();
+                        bgCtx.moveTo(p.x, p.y);
+                        bgCtx.lineTo(p2.x, p2.y);
+                        bgCtx.stroke();
+                    }
+                }
+            });
+
+            requestAnimationFrame(animateBg);
+        }
+        animateBg();
+
+        // 3D Cyber Core Model Canvas
+        const modelCanvas = document.getElementById('modelCanvas');
+        const modelCtx = modelCanvas.getContext('2d');
+
+        function resizeModel() {
+            modelCanvas.width = window.innerWidth;
+            modelCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeModel);
+        resizeModel();
+
+        let cubeAngleX = 0;
+        let cubeAngleY = 0;
+        let mouseX = 0, mouseY = 0;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth - 0.5) * 0.6;
+            mouseY = (e.clientY / window.innerHeight - 0.5) * 0.6;
+        });
+
+        const vertices = [
+            [-120, -120, -120], [120, -120, -120], [120, 120, -120], [-120, 120, -120],
+            [-120, -120, 120],  [120, -120, 120],  [120, 120, 120],  [-120, 120, 120]
+        ];
+
+        const edges = [
+            [0,1], [1,2], [2,3], [3,0],
+            [4,5], [5,6], [6,7], [7,4],
+            [0,4], [1,5], [2,6], [3,7]
+        ];
+
+        function project(x, y, z) {
+            const radX = cubeAngleX;
+            const radY = cubeAngleY;
+
+            let y1 = y * Math.cos(radX) - z * Math.sin(radX);
+            let z1 = y * Math.sin(radX) + z * Math.cos(radX);
+
+            let x2 = x * Math.cos(radY) + z1 * Math.sin(radY);
+            let z2 = -x * Math.sin(radY) + z1 * Math.cos(radY);
+
+            const scale = 450 / (450 + z2 + 350);
+            return [
+                x2 * scale + modelCanvas.width / 2,
+                y1 * scale + modelCanvas.height / 2.3
+            ];
+        }
+
+        function render3DCube() {
+            modelCtx.clearRect(0, 0, modelCanvas.width, modelCanvas.height);
+
+            cubeAngleX += 0.004 + mouseY * 0.02;
+            cubeAngleY += 0.006 + mouseX * 0.02;
+
+            const projected = vertices.map(v => project(v[0], v[1], v[2]));
+
+            modelCtx.strokeStyle = 'rgba(255, 0, 51, 0.25)';
+            modelCtx.lineWidth = 2.5;
+            modelCtx.shadowBlur = 15;
+            modelCtx.shadowColor = '#ff0033';
+
+            edges.forEach(edge => {
+                const p1 = projected[edge[0]];
+                const p2 = projected[edge[1]];
+                modelCtx.beginPath();
+                modelCtx.moveTo(p1[0], p1[1]);
+                modelCtx.lineTo(p2[0], p2[1]);
+                modelCtx.stroke();
+            });
+
+            modelCtx.shadowBlur = 0;
+            requestAnimationFrame(render3DCube);
+        }
+        render3DCube();
+
+        // Smooth Ultra Laser Trail Canvas
+        const trailCanvas = document.getElementById('trailCanvas');
+        const trailCtx = trailCanvas.getContext('2d');
+
+        function resizeTrail() {
+            trailCanvas.width = window.innerWidth;
+            trailCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeTrail);
+        resizeTrail();
+
+        let points = [];
+
+        function handleMove(x, y) {
+            points.push({ x, y, time: Date.now() });
+        }
+
+        window.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) handleMove(e.touches[0].clientX, e.touches[0].clientY);
+        });
+
+        function animateTrail() {
+            trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+
+            const now = Date.now();
+            points = points.filter(p => now - p.time < 500);
+
+            if (points.length > 1) {
+                trailCtx.beginPath();
+                trailCtx.moveTo(points[0].x, points[0].y);
+
+                for (let i = 1; i < points.length; i++) {
+                    trailCtx.lineTo(points[i].x, points[i].y);
+                }
+
+                trailCtx.strokeStyle = '#ff0033';
+                trailCtx.lineWidth = 5;
+                trailCtx.lineCap = 'round';
+                trailCtx.lineJoin = 'round';
+                trailCtx.shadowBlur = 25;
+                trailCtx.shadowColor = '#ff0033';
+                trailCtx.stroke();
+            }
+
+            requestAnimationFrame(animateTrail);
+        }
+        animateTrail();
+
+        // Lightbox Control
         function openLightbox(imageSrc) {
+            playSound(800, 'sine', 0.1);
             const lightbox = document.getElementById('lightbox');
             const lightboxImg = document.getElementById('lightbox-img');
             lightboxImg.src = imageSrc;
